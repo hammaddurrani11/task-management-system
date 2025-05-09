@@ -19,22 +19,22 @@ const employeeSchema = mongoose.Schema({
         trim: true,
         minlength: [5, 'Password must be atleast 5 Characters Long']
     },
-    assignedTasks: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'tasks'
-    }],
-    newTask: {
-        type: Number,
-        default: 0
-    },
-    completed: {
-        type: Number,
-        default: 0
-    }
-    ,
-    failed: {
-        type: Number,
-        default: 0
+    assignedTasks: {
+        newTask: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'tasks',
+            default: []
+        }],
+        completed: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'tasks',
+            default: []
+        }],
+        failed: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'tasks',
+            default: []
+        }]
     }
 })
 

@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
+import { handleError } from '../utils/apiHelper';
+import { DataContext } from '../../context/employeeContext';
 
 const CreateTask = () => {
     const [taskTitle, setTaskTitle] = useState('');
@@ -7,10 +9,12 @@ const CreateTask = () => {
     const [taskCategory, setTaskCategory] = useState('');
     const [taskDescription, setTaskDescription] = useState('');
 
+    const { fetchData } = useContext(DataContext);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const response = await fetch('http://localhost:3000/createtask', {
+        const res = await fetch('http://localhost:3000/createtask', {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -25,17 +29,21 @@ const CreateTask = () => {
             })
         })
 
-        const json = response.json();
+        const data = await res.json();
 
-        if (!response.ok) {
-            return alert(json.error);
+        if (!res.ok) {
+            handleError(res, data);
         }
+        else {
+            console.log("Created", data);
+            setTaskTitle('');
+            setTaskDate('');
+            setTaskAssign('');
+            setTaskCategory('');
+            setTaskDescription('');
 
-        setTaskTitle('');
-        setTaskDate('');
-        setTaskAssign('');
-        setTaskCategory('');
-        setTaskDescription('');
+            fetchData();
+        }
     }
     return (
         <div className='mx-8 my-2 p-5 bg-[#1c1c1c] rounded'>

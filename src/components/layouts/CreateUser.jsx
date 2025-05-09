@@ -1,17 +1,18 @@
 import React, { useContext, useState } from 'react'
 import { DataContext } from '../../context/employeeContext'
+import { handleError } from '../utils/apiHelper'
 
 const CreateUser = () => {
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
-    const {fetchData} = useContext(DataContext);
+    const { fetchData } = useContext(DataContext);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const response = await fetch('http://localhost:3000/register/employee', {
+        const res = await fetch('http://localhost:3000/register/employee', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -20,17 +21,19 @@ const CreateUser = () => {
             body: JSON.stringify({ username: username, email: email, password: password })
         })
 
-        const json = await response.json();
+        const data = await res.json();
 
-        if (!response.ok) {
-            console.log(json.error);
+        if (!res.ok) {
+            handleError(res, data);
+        }
+        else {
+            console.log("Employee Created", data);
+            setUsername('');
+            setEmail('');
+            setPassword('');
+            fetchData();
         }
 
-        fetchData();
-
-        setUsername('');
-        setEmail('');
-        setPassword('');
     }
 
     return (

@@ -1,14 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
+import { handleError } from '../utils/apiHelper';
+import { DataContext } from '../../context/employeeContext'
 
 const Login = () => {
+    const { user } = useContext(DataContext);
     let navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
     const submitHandler = async (e) => {
         e.preventDefault();
 
-        const response = await fetch('http://localhost:3000/login', {
+        const res = await fetch('http://localhost:3000/login', {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -17,22 +21,18 @@ const Login = () => {
             body: JSON.stringify({ email: email, password: password })
         })
 
-        const json = await response.json();
+        const data = await res.json();
 
-        if (!response.ok) {
-            return alert(json.error);
+        if (!res.ok) {
+            handleError(res, data);
         }
+        else {
+            console.log("Logged In", data);
 
-        const checkRes = await fetch('http://localhost:3000/auth/check', {
-            credentials: 'include'
-        })
-
-        const userData = await checkRes.json();
-
-        if (userData.authenticated) {
-            if (userData.user.role === 'admin') {
+            if (data.role === 'admin') {
+                console.log(user.username);
                 navigate('/');
-            } else if (userData.user.role === 'employee') {
+            } else if (data.role === 'employee') {
                 navigate('/employee');
             }
         }

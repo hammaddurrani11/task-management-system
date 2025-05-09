@@ -1,35 +1,34 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useContext } from 'react'
 import Header from '../layouts/Header'
 import TaskListNumber from '../layouts/TaskListNumber'
-import Tasklist from '../tasklist/Tasklist'
 import { useNavigate } from 'react-router-dom'
+import Tasklist from '../tasks/Tasklist'
+import { DataContext } from '../../context/employeeContext'
 
 const EmployeeDashboard = (props) => {
+  const { user, employeeData, fetchAuthAndEmployeeData } = useContext(DataContext);
   const navigate = useNavigate();
+  const adminCheck = () => {
+    if (user.role === "admin") {
+      navigate('/');
+    }
+  }
+
   useEffect(() => {
-    fetch('http://localhost:3000/auth/check', {
-      method: 'GET',
-      credentials: 'include'
-    })
-      .then(res => {
-        if (res.status === 401 || res.status === 403) {
-          navigate('/login');
-          return;
-        }
-        return res.json();
-      })
-      .then(data => {
-        if (data?.authenticated) {
-          navigate('/employee');
-        }
-      })
-      .catch(() => navigate('/login'));
-  }, [])
+    fetchAuthAndEmployeeData();
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      adminCheck();
+    }
+  }, [user]);
+
   return (
     <>
-      <Header username={props.username}/>
-      <TaskListNumber data={props.data} />
-      <Tasklist data={props.data} />
+      <Header username={!user ? "Null" : user.username} />
+      <TaskListNumber data={employeeData} />
+      <Tasklist data={employeeData} />
     </>
   )
 }

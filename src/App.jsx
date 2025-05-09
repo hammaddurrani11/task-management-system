@@ -19,11 +19,12 @@ function App() {
       .then(data => {
         if (data.authenticated) {
           if (data.user.role === 'admin') {
-            navigate('/')
             setUserName(data.user.username);
+            console.log(data.user.username);
+            navigate('/')
           } else if (data.user.role === 'employee') {
-            navigate('/employee');
             setUserName(data.user.username)
+            navigate('/employee');
             const employeeData = fetch('http://localhost:3000/fetch-loggedin-user', {
               credentials: 'include'
             })

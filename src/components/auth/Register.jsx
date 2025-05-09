@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
+import { handleError } from '../utils/apiHelper';
 
 const Register = () => {
     const navigate = useNavigate();
@@ -10,7 +11,7 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const response = await fetch('http://localhost:3000/register/admin', {
+        const res = await fetch('http://localhost:3000/register/admin', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -22,13 +23,16 @@ const Register = () => {
             })
         })
 
-        const json = await response.json();
+        const data = await res.json();
 
-        if (!response.ok) {
-            return alert(json.error);
+        if (!res.ok) {
+            handleError(res, data);
+        }
+        else {
+            console.log("Admin Registered", data);
+            navigate('/login');
         }
 
-        navigate('/login');
     }
     return (
         <>
