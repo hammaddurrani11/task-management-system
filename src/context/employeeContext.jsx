@@ -41,10 +41,11 @@ const employeeContext = ({ children }) => {
 
   useEffect(() => {
     fetchData();
+    fetchAuthAndEmployeeData();
   }, [])
 
   return (
-    <DataContext.Provider value={{ employees, setEmployees, fetchData, user, employeeData, fetchAuthAndEmployeeData }}>
+    <DataContext.Provider value={{ employees, setEmployees, setUser, fetchData, user, employeeData, fetchAuthAndEmployeeData }}>
       <div>{children}</div>
     </DataContext.Provider>
   )

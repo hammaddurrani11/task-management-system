@@ -309,10 +309,10 @@ router.delete('/delete-employee/:id', authMiddleware, async (req, res) => {
 
 router.put('/complete-task/:id', authMiddleware, async (req, res) => {
     const { id } = req.params;
-    const userId = req.user._id;
+    const userId = req.user.userid;
 
     try {
-        const user = await EmployeeModel.findOne(userId);
+        const user = await EmployeeModel.findOne({ _id: userId });
 
         if (!user) {
             return res.status(404).json({
@@ -320,7 +320,7 @@ router.put('/complete-task/:id', authMiddleware, async (req, res) => {
             })
         }
 
-        const taskIndex = user.assignedTasks.newTask.indexOf(id);
+        const taskIndex = user.assignedTasks.newTask.findIndex(taskId => taskId.toString() === id);
         if (taskIndex === -1) {
             return res.status(404).json({
                 error: "Task Not Found"
@@ -329,7 +329,7 @@ router.put('/complete-task/:id', authMiddleware, async (req, res) => {
 
         user.assignedTasks.newTask.splice(taskIndex, 1);
 
-        if (!user.assignedTasks.completed.includes(id)) {
+        if (!user.assignedTasks.completed.some(taskId => taskId.toString() === id)) {
             user.assignedTasks.completed.push(id);
         }
 
@@ -349,19 +349,35 @@ router.put('/complete-task/:id', authMiddleware, async (req, res) => {
 
 router.put('/failed-task/:id', authMiddleware, async (req, res) => {
     const { id } = req.params;
+    const userId = req.user.userid;
 
     try {
-        const user = await EmployeeModel.findOne({ _id: id });
-
+        const user = await EmployeeModel.findOne({ _id: userId });
+        console.log(user);
         if (!user) {
             res.status(400).json({
                 error: "User Not Found"
             })
         }
 
-        user.newTask = Math.max(0, user.newTask - 1);
-        user.completed = Math.max(0, user.newTask - 1);
-        user.failed = user.failed + 1;
+        const taskIndex = user.assignedTasks.newTask.findIndex(taskId => taskId.toString() === id);
+        if (taskIndex === -1) {
+            res.status(404).json({
+                error: "Task Not Found"
+            })
+        }
+
+        if (!user.assignedTasks.newTask.includes(id)) {
+            return res.status(403).json({
+                error: "Task not assigned to this user"
+            });
+        }
+
+        user.assignedTasks.newTask.splice(taskIndex, 1);
+
+        if (!user.assignedTasks.failed.some(taskId => taskId.toString() === id)) {
+            user.assignedTasks.failed.push(id);
+        }
 
         await user.save();
 

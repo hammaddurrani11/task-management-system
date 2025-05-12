@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { handleError } from '../utils/apiHelper';
+import { DataContext } from '../../context/employeeContext';
 
 const NewTask = ({data}) => {
+
+  const { fetchAuthAndEmployeeData } = useContext(DataContext);
 
   const updateTask = async (e) => {
     console.log(e);
@@ -17,11 +20,12 @@ const NewTask = ({data}) => {
     }
     else {
       console.log("Task marked as completed", data);
+      fetchAuthAndEmployeeData();
     }
   }
 
-  const failedTask = async () => {
-    const res = await fetch(`http://localhost:3000/failed-task/${props.data._id}`, {
+  const failedTask = async (e) => {
+    const res = await fetch(`http://localhost:3000/failed-task/${e._id}`, {
       method: 'PUT',
       credentials: 'include'
     })
@@ -33,6 +37,7 @@ const NewTask = ({data}) => {
     }
     else {
       console.log("Task Updated", data);
+      fetchAuthAndEmployeeData();
     }
   }
 
@@ -47,9 +52,9 @@ const NewTask = ({data}) => {
           <h2 className='text-xl font-semibold mt-5'>{data.taskTitle}</h2>
           <p className='text-sm font-medium'>{data.taskDescription}</p>
           <div className='flex items-center justify-center mt-5 gap-2'>
-            <button onClick={(e)=>updateTask(e)}
+            <button onClick={() => updateTask(data)}
               className='bg-green-500 rounded text-sm px-2 py-1 text-white hover:bg-green-700 cursor-pointer'>Mark as Complete</button>
-            <button onClick={failedTask}
+            <button onClick={() => failedTask(data)}
               className='bg-red-500 rounded text-sm px-2 py-1 text-white hover:bg-red-700 cursor-pointer'>Mark as Failed</button>
           </div>
         </div>

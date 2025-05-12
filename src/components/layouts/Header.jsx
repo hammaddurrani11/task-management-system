@@ -1,7 +1,11 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { DataContext } from '../../context/employeeContext';
 
 const Header = (props) => {
+
+    const { setUser } = useContext(DataContext);
+
     const navigate = useNavigate();
     const logOutButton = async () => {
         const res = await fetch('http://localhost:3000/logout', {
@@ -12,6 +16,7 @@ const Header = (props) => {
         const data = await res.json();
         console.log(data.message);
 
+        setUser(null);
         navigate('/login');
     }
     return (

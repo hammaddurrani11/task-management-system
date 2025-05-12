@@ -1,35 +1,36 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useContext } from 'react'
 import Header from '../layouts/Header'
 import CreateTask from '../layouts/CreateTask'
 import AllTasks from '../layouts/AllTasks'
 import { useNavigate } from 'react-router-dom';
 import CreateUser from '../layouts/CreateUser';
+import { DataContext } from '../../context/employeeContext'
 
-const AdminDashboard = (props) => {
+const AdminDashboard = () => {
+    const { fetchAuthAndEmployeeData, user } = useContext(DataContext);
+    console.log(user);
+
     const navigate = useNavigate();
+    const adminCheck = () => {
+        if (user.role === "employee") {
+            navigate('/employee');
+        }
+    }
+
     useEffect(() => {
-        fetch('http://localhost:3000/auth/check', {
-            method: 'GET',
-            credentials: 'include'
-        })
-            .then(res => {
-                if (res.status === 401 || res.status === 403) {
-                    navigate('/login');
-                    return;
-                }
-                return res.json();
-            })
-            .then(data => {
-                if (data?.authenticated) {
-                    navigate('/');
-                }
-            })
-            .catch(() => navigate('/login'));
+        fetchAuthAndEmployeeData();
     }, [])
+
+    useEffect(() => {
+        if (user) {
+            adminCheck();
+        }
+    }, [user])
+
 
     return (
         <>
-            <Header username={props.username} />
+            <Header username={!user ? "Null" : user.username} />
             <CreateTask />
             <CreateUser />
             <AllTasks />

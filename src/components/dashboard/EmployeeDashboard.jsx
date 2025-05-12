@@ -5,8 +5,9 @@ import { useNavigate } from 'react-router-dom'
 import Tasklist from '../tasks/Tasklist'
 import { DataContext } from '../../context/employeeContext'
 
-const EmployeeDashboard = (props) => {
+const EmployeeDashboard = () => {
   const { user, employeeData, fetchAuthAndEmployeeData } = useContext(DataContext);
+  console.log(user);
   const navigate = useNavigate();
   const adminCheck = () => {
     if (user.role === "admin") {

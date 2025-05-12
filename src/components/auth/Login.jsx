@@ -4,7 +4,7 @@ import { handleError } from '../utils/apiHelper';
 import { DataContext } from '../../context/employeeContext'
 
 const Login = () => {
-    const { user } = useContext(DataContext);
+    const { user, fetchAuthAndEmployeeData } = useContext(DataContext);
     let navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -28,9 +28,9 @@ const Login = () => {
         }
         else {
             console.log("Logged In", data);
+            fetchAuthAndEmployeeData();
 
             if (data.role === 'admin') {
-                console.log(user.username);
                 navigate('/');
             } else if (data.role === 'employee') {
                 navigate('/employee');
