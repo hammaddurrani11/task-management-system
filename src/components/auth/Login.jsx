@@ -4,7 +4,7 @@ import { handleError } from '../utils/apiHelper';
 import { DataContext } from '../../context/employeeContext'
 
 const Login = () => {
-    const { user, fetchAuthAndEmployeeData } = useContext(DataContext);
+    const { fetchAuthAndEmployeeData } = useContext(DataContext);
     let navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
