@@ -38,6 +38,9 @@ function App() {
               })
           }
         }
+        else {
+          navigate('/login');
+        }
       })
   }, [])
 
